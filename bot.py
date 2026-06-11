@@ -9,7 +9,7 @@ bot = telebot.TeleBot(TOKEN)
 
 # ───── تنظیمات ─────
 CHANNELS = ["@v2ray_freex", "@ekko_vpn"]
-BOT_USERNAME = "YOUR_BOT_USERNAME"
+BOT_USERNAME = "V2RAY_FREEX1_bot"
 DATA_FILE = "data.json"
 
 # ───── دیتابیس ─────
@@ -116,7 +116,7 @@ def start(message):
             reply_markup=menu()
         )
 
-# ───── کانفیگ ─────
+# ───── کانفیگ (جدید) ─────
 @bot.callback_query_handler(func=lambda call: call.data == "get_config")
 def get_config(call):
 
@@ -127,13 +127,28 @@ def get_config(call):
 🔢 پلن: زیرمجموعه
 📌 لوکیشن: مولتی لوکیشن
 📈 حجم: نامحدود
+👥 کاربر: 1 عدد
 
+━━━━━━━━━━━━━━
 🔑 کانفیگ‌ها:
 
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.109.223:80
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@speedtest.net:80
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@167.82.0.1:80
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.0.1:80
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.109.223:80?security=none&type=ws&path=%2F&host=max-gb1.global.ssl.fastly.net#Germany1
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@speedtest.net:80?security=none&type=ws&path=%2F&host=max-gb1.global.ssl.fastly.net#Germany2
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@167.82.0.1:80?security=none&type=ws&path=%2F&host=max-gb1.global.ssl.fastly.net#Germany3
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.0.1:80?security=none&type=ws&path=%2F&host=max-gb1.global.ssl.fastly.net#Germany4
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@fast-domain-gb.dhbhvfbhfbvhfbvhfbhv.shop:2096?security=none&type=grpc
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@fast-domain-gb.dhbhvfbhfbvhfbvhfbhv.shop:2095?security=reality&type=tcp
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@pishdad.org:8080?security=none&type=ws
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@www.speedtest.org:8080?security=none&type=ws
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@www.parsvds.com:8080?security=none&type=ws
 """
 
     bot.send_message(call.message.chat.id, CONFIG)
@@ -156,21 +171,26 @@ def free(m):
     text = f"""
 🎁 چگونه سرویس رایگان بگیریم؟
 
-📲 لینک دعوت خود را برای دیگران ارسال کنید:
+📲 لینک دعوت خود را برای دیگران ارسال کنید 📲:
 {link}
+
+━━━━━━━━━━━━━━
 ❓ محدودیتی وجود دارد؟
 خیر! به ازای هر ۴ دعوت شما ۶ گیگ کانفیگ دریافت میکنید و میتوانید از آن استفاده نمایید.
-(بدون محدودیت در تعداد زیرمجموعه! 🚀)
+( بدون محدودیت در تعداد زیرمجموعه! 🚀 )
 
 📊 تعداد دعوت های شما: {ref_count.get(user_id,0)} نفر
+
+━━━━━━━━━━━━━━
 🎯 به ازای هر ۴ کاربر جدید:
 ۶ گیگ کانفیگ دریافت میکنید 🎁
 
 ⚠️ فقط در صورتی که کاربر ربات را استارت کند 🤖
 و حتماً در کانال ما عضو شود 👥
 
+━━━━━━━━━━━━━━
 ⚠️ توجه:
-عضویت در کانال الزامی است ✅
+عضویت در کانال الزامی است، ✅
 در غیر این صورت هدیه‌ای تعلق نمی‌گیرد ❌
 """
 
