@@ -74,7 +74,6 @@ def start(message):
 
     referral_sent = False
 
-    # ───── رفرال ─────
     if len(args) > 1:
         ref_id = str(args[1])
 
@@ -92,7 +91,6 @@ def start(message):
 
                 bot.send_message(ref_id, "🎉 +1 رفرال گرفتی!")
 
-                # ───── جایزه هر ۴ نفر ─────
                 if ref_count[ref_id] % 4 == 0 and reward_done.get(ref_id) != ref_count[ref_id]:
 
                     reward_done[ref_id] = ref_count[ref_id]
@@ -123,7 +121,7 @@ def start(message):
 def get_config(call):
 
     CONFIG = """
-🎁 اشتراک هدیه شما آماده شد
+🎁 اشتراک هدیه شما با موفقیت ایجاد شد!
 
 👤 نام کاربری: YRh_4046946
 🔢 پلن: زیرمجموعه
@@ -135,13 +133,7 @@ def get_config(call):
 vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.109.223:80
 vless://0058c215-ab1e-400c-a403-b5b2fda7e846@speedtest.net:80
 vless://0058c215-ab1e-400c-a403-b5b2fda7e846@167.82.0.1:80
-
 vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.0.1:80
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@fast-domain-gb.dhbhvfbhfbvhfbvhfbhv.shop:2096
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@fast-domain-gb.dhbhvfbhfbvhfbvhfbhv.shop:2095
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@pishdad.org:8080
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@www.speedtest.org:8080
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@www.parsvds.com:8080
 """
 
     bot.send_message(call.message.chat.id, CONFIG)
@@ -164,14 +156,27 @@ def free(m):
     text = f"""
 🎁 چگونه سرویس رایگان بگیریم؟
 
-📲 لینک دعوت:
+📲 لینک دعوت خود را برای دیگران ارسال کنید:
 {link}
 
-📊 تعداد دعوت: {ref_count.get(user_id,0)} نفر
+━━━━━━━━━━━━━━
+❓ محدودیتی وجود دارد؟
+خیر! به ازای هر ۴ دعوت شما ۶ گیگ کانفیگ دریافت میکنید و میتوانید از آن استفاده نمایید.
+(بدون محدودیت در تعداد زیرمجموعه! 🚀)
 
-🎯 هر ۴ دعوت = کانفیگ رایگان
+📊 تعداد دعوت های شما: {ref_count.get(user_id,0)} نفر
 
-⚠️ عضویت در کانال الزامی است
+━━━━━━━━━━━━━━
+🎯 به ازای هر ۴ کاربر جدید:
+۶ گیگ کانفیگ دریافت میکنید 🎁
+
+⚠️ فقط در صورتی که کاربر ربات را استارت کند 🤖
+و حتماً در کانال ما عضو شود 👥
+
+━━━━━━━━━━━━━━
+⚠️ توجه:
+عضویت در کانال الزامی است ✅
+در غیر این صورت هدیه‌ای تعلق نمی‌گیرد ❌
 """
 
     bot.send_message(m.chat.id, text, reply_markup=menu())
