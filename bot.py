@@ -3,16 +3,19 @@ import json
 import os
 from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeyboardButton
 
-# ───── TOKEN ─────
+───── TOKEN ─────
+
 TOKEN = "8937716606:AAGVFt5O1A40c-EZMuCAbGm9GjNYrWPLgLQ"
 bot = telebot.TeleBot(TOKEN)
 
-# ───── تنظیمات ─────
+───── تنظیمات ─────
+
 CHANNELS = ["@v2ray_freex", "@ekko_vpn"]
 BOT_USERNAME = "V2RAY_FREEX1_bot"
 DATA_FILE = "data.json"
 
-# ───── دیتابیس ─────
+───── دیتابیس ─────
+
 def load_data():
     if os.path.exists(DATA_FILE):
         try:
@@ -36,14 +39,16 @@ def save_data():
             "reward_done": reward_done
         }, f, ensure_ascii=False, indent=4)
 
-# ───── منو ─────
+───── منو ─────
+
 def menu():
     m = ReplyKeyboardMarkup(resize_keyboard=True)
     m.add("🎁 سرویس رایگان", "🛍️ خرید سرویس")
     m.add("👤 پشتیبانی")
     return m
 
-# ───── جوین اجباری ─────
+───── جوین اجباری ─────
+
 def join_button():
     m = InlineKeyboardMarkup()
     m.add(InlineKeyboardButton("📢 کانال 1", url="https://t.me/v2ray_freex"))
@@ -61,7 +66,8 @@ def is_member(user_id):
     except:
         return False
 
-# ───── /start ─────
+───── /start ─────
+
 @bot.message_handler(commands=['start'])
 def start(message):
 
@@ -89,7 +95,8 @@ def start(message):
 
                 save_data()
 
-                bot.send_message(ref_id, "🎉 +1 رفرال گرفتی!")
+                # 🔥 فقط همین خط تغییر کرده
+                bot.send_message(ref_id, "🎉 شخص جدیدی با #لینک شما وارد ربات شد\n\n➕ یک امتیاز به شما اضافه شد")
 
                 if ref_count[ref_id] % 4 == 0 and reward_done.get(ref_id) != ref_count[ref_id]:
 
@@ -116,7 +123,8 @@ def start(message):
             reply_markup=menu()
         )
 
-# ───── کانفیگ (جدید) ─────
+───── کانفیگ (جدید) ─────
+
 @bot.callback_query_handler(func=lambda call: call.data == "get_config")
 def get_config(call):
 
@@ -153,7 +161,8 @@ vless://0058c215-ab1e-400c-a403-b5b2fda7e846@www.parsvds.com:8080?security=none&
 
     bot.send_message(call.message.chat.id, CONFIG)
 
-# ───── بررسی عضویت ─────
+───── بررسی عضویت ─────
+
 @bot.callback_query_handler(func=lambda call: call.data == "check")
 def check(call):
     if is_member(call.from_user.id):
@@ -161,7 +170,8 @@ def check(call):
     else:
         bot.send_message(call.message.chat.id, "❌ هنوز عضو کانال‌ها نیستی")
 
-# ───── سرویس رایگان ─────
+───── سرویس رایگان ─────
+
 @bot.message_handler(func=lambda m: m.text == "🎁 سرویس رایگان")
 def free(m):
 
@@ -185,7 +195,7 @@ def free(m):
 🎯 به ازای هر ۴ کاربر جدید:
 ۶ گیگ کانفیگ دریافت میکنید 🎁
 
- فقط در صورتی که کاربر ربات را استارت کند 🤖
+فقط در صورتی که کاربر ربات را استارت کند 🤖
 و حتماً در کانال ما عضو شود 👥
 
 ━━━━━━━━━━━━━━
@@ -196,12 +206,14 @@ def free(m):
 
     bot.send_message(m.chat.id, text, reply_markup=menu())
 
-# ───── خرید ─────
+───── خرید ─────
+
 @bot.message_handler(func=lambda m: m.text == "🛍️ خرید سرویس")
 def buy(m):
     bot.send_message(m.chat.id, "❌ فروشگاه فعلاً بسته است")
 
-# ───── پشتیبانی ─────
+───── پشتیبانی ─────
+
 @bot.message_handler(func=lambda m: m.text == "👤 پشتیبانی")
 def support(m):
     bot.send_message(m.chat.id, "📩 پشتیبانی: @SARAV2RAY")
