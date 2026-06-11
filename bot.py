@@ -7,28 +7,12 @@ from telebot.types import ReplyKeyboardMarkup, InlineKeyboardMarkup, InlineKeybo
 TOKEN = "8937716606:AAGVFt5O1A40c-EZMuCAbGm9GjNYrWPLgLQ"
 bot = telebot.TeleBot(TOKEN)
 
-# ───── SETTINGS ─────
+# ───── تنظیمات ─────
 CHANNELS = ["@v2ray_freex", "@ekko_vpn"]
-BOT_USERNAME = "V2RAY_FREEX1_bot"
+BOT_USERNAME = "YOUR_BOT_USERNAME"
 DATA_FILE = "data.json"
 
-# ───── CONFIG ─────
-CONFIG_TEXT = """
-✅ اشتراک هدیه شما
-
-📌 لوکیشن: Germany
-📈 حجم: نامحدود
-
-🔑 کانفیگ‌ها:
-
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.109.223:80?security=none&type=ws
-
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@speedtest.net:80?security=none&type=ws
-
-vless://0058c215-ab1e-400c-a403-b5b2fda7e846@167.82.0.1:80?security=none&type=ws
-"""
-
-# ───── LOAD DATA ─────
+# ───── دیتابیس ─────
 def load_data():
     if os.path.exists(DATA_FILE):
         try:
@@ -44,8 +28,7 @@ ref_count = data.get("ref_count", {})
 user_refs = data.get("user_refs", {})
 reward_done = data.get("reward_done", {})
 
-# ───── SAVE ─────
-def save():
+def save_data():
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump({
             "ref_count": ref_count,
@@ -53,33 +36,32 @@ def save():
             "reward_done": reward_done
         }, f, ensure_ascii=False, indent=4)
 
-# ───── MENU ─────
+# ───── منو ─────
 def menu():
     m = ReplyKeyboardMarkup(resize_keyboard=True)
     m.add("🎁 سرویس رایگان", "🛍️ خرید سرویس")
     m.add("👤 پشتیبانی")
     return m
 
-# ───── JOIN BUTTON ─────
-def join_btn():
+# ───── جوین اجباری ─────
+def join_button():
     m = InlineKeyboardMarkup()
     m.add(InlineKeyboardButton("📢 کانال 1", url="https://t.me/v2ray_freex"))
     m.add(InlineKeyboardButton("📢 کانال 2", url="https://t.me/ekko_vpn"))
     m.add(InlineKeyboardButton("✅ بررسی عضویت", callback_data="check"))
     return m
 
-# ───── CHECK MEMBER ─────
 def is_member(user_id):
     try:
         for ch in CHANNELS:
-            status = bot.get_chat_member(ch, user_id).status
-            if status not in ["member", "administrator", "creator"]:
+            member = bot.get_chat_member(ch, user_id)
+            if member.status not in ["member", "administrator", "creator"]:
                 return False
         return True
     except:
         return False
 
-# ───── START ─────
+# ───── /start ─────
 @bot.message_handler(commands=['start'])
 def start(message):
 
@@ -87,12 +69,12 @@ def start(message):
     args = message.text.split()
 
     if not is_member(message.from_user.id):
-        bot.send_message(message.chat.id, "❌ اول عضو کانال‌ها شو", reply_markup=join_btn())
+        bot.send_message(message.chat.id, "❗ اول عضو کانال‌ها شو 👇", reply_markup=join_button())
         return
 
-    sent = False
+    referral_sent = False
 
-    # ───── REFERRAL ─────
+    # ───── رفرال ─────
     if len(args) > 1:
         ref_id = str(args[1])
 
@@ -104,68 +86,105 @@ def start(message):
             ):
 
                 user_refs[user_id] = ref_id
-                ref_count[ref_id] = ref_count.get(ref_id, 0) + 1
-                save()
+                ref_count[ref_id] = int(ref_count.get(ref_id, 0)) + 1
+
+                save_data()
 
                 bot.send_message(ref_id, "🎉 +1 رفرال گرفتی!")
 
-                # ───── REWARD ─────
+                # ───── جایزه هر ۴ نفر ─────
                 if ref_count[ref_id] % 4 == 0 and reward_done.get(ref_id) != ref_count[ref_id]:
 
                     reward_done[ref_id] = ref_count[ref_id]
-                    save()
-
-                    btn = InlineKeyboardMarkup()
-                    btn.add(InlineKeyboardButton("📦 دریافت کانفیگ", callback_data="config"))
+                    save_data()
 
                     bot.send_message(
                         ref_id,
-                        "🎉 ۴ رفرال کامل شد!",
-                        reply_markup=btn
+                        "🎉 تبریک!\n۴ دعوت کامل شد ✔\nبرای دریافت کانفیگ روی دکمه زیر بزن 👇",
+                        reply_markup=InlineKeyboardMarkup().add(
+                            InlineKeyboardButton("📋 دریافت کانفیگ", callback_data="get_config")
+                        )
                     )
 
-                sent = True
+                referral_sent = True
 
         except:
             pass
 
-    if not sent:
-        bot.send_message(message.chat.id, "👋 خوش آمدی", reply_markup=menu())
+    if not referral_sent:
+        bot.send_message(
+            message.chat.id,
+            "👋 خوش آمدی\nیکی از گزینه‌ها را انتخاب کن:",
+            reply_markup=menu()
+        )
 
-# ───── CONFIG BUTTON ─────
-@bot.callback_query_handler(func=lambda c: c.data == "config")
-def config(call):
-    bot.send_message(call.message.chat.id, CONFIG_TEXT)
+# ───── کانفیگ ─────
+@bot.callback_query_handler(func=lambda call: call.data == "get_config")
+def get_config(call):
 
-# ───── CHECK JOIN ─────
-@bot.callback_query_handler(func=lambda c: c.data == "check")
+    CONFIG = """
+🎁 اشتراک هدیه شما آماده شد
+
+👤 نام کاربری: YRh_4046946
+🔢 پلن: زیرمجموعه
+📌 لوکیشن: مولتی لوکیشن
+📈 حجم: نامحدود
+
+🔑 کانفیگ‌ها:
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.109.223:80
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@speedtest.net:80
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@167.82.0.1:80
+
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@151.101.0.1:80
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@fast-domain-gb.dhbhvfbhfbvhfbvhfbhv.shop:2096
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@fast-domain-gb.dhbhvfbhfbvhfbvhfbhv.shop:2095
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@pishdad.org:8080
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@www.speedtest.org:8080
+vless://0058c215-ab1e-400c-a403-b5b2fda7e846@www.parsvds.com:8080
+"""
+
+    bot.send_message(call.message.chat.id, CONFIG)
+
+# ───── بررسی عضویت ─────
+@bot.callback_query_handler(func=lambda call: call.data == "check")
 def check(call):
     if is_member(call.from_user.id):
-        bot.send_message(call.message.chat.id, "✅ تایید شد", reply_markup=menu())
+        bot.send_message(call.message.chat.id, "✔ عضویت تایید شد", reply_markup=menu())
     else:
-        bot.send_message(call.message.chat.id, "❌ هنوز عضو نیستی")
+        bot.send_message(call.message.chat.id, "❌ هنوز عضو کانال‌ها نیستی")
 
-# ───── FREE ─────
+# ───── سرویس رایگان ─────
 @bot.message_handler(func=lambda m: m.text == "🎁 سرویس رایگان")
 def free(m):
+
     user_id = str(m.from_user.id)
     link = f"https://t.me/{BOT_USERNAME}?start={user_id}"
 
-    bot.send_message(
-        m.chat.id,
-        f"🎁 لینک دعوت:\n{link}\n\n📊 رفرال: {ref_count.get(user_id,0)}",
-        reply_markup=menu()
-    )
+    text = f"""
+🎁 چگونه سرویس رایگان بگیریم؟
 
-# ───── BUY ─────
+📲 لینک دعوت:
+{link}
+
+📊 تعداد دعوت: {ref_count.get(user_id,0)} نفر
+
+🎯 هر ۴ دعوت = کانفیگ رایگان
+
+⚠️ عضویت در کانال الزامی است
+"""
+
+    bot.send_message(m.chat.id, text, reply_markup=menu())
+
+# ───── خرید ─────
 @bot.message_handler(func=lambda m: m.text == "🛍️ خرید سرویس")
 def buy(m):
-    bot.send_message(m.chat.id, "❌ فعلاً بسته است")
+    bot.send_message(m.chat.id, "❌ فروشگاه فعلاً بسته است")
 
-# ───── SUPPORT ─────
+# ───── پشتیبانی ─────
 @bot.message_handler(func=lambda m: m.text == "👤 پشتیبانی")
 def support(m):
-    bot.send_message(m.chat.id, "📩 @SARAV2RAY")
+    bot.send_message(m.chat.id, "📩 پشتیبانی: @SARAV2RAY")
 
-print("Bot running...")
+print("Bot is running...")
 bot.infinity_polling()
